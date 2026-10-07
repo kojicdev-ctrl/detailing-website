@@ -1,0 +1,205 @@
+@import 'tailwindcss';
+@import '@fontsource/cormorant-garamond/400.css';
+@import '@fontsource/cormorant-garamond/500.css';
+@import '@fontsource/cormorant-garamond/600.css';
+@import '@fontsource-variable/manrope/index.css';
+
+@theme {
+  --font-display: 'Cormorant Garamond', ui-serif, Georgia, serif;
+  --font-sans: 'Manrope Variable', ui-sans-serif, system-ui, sans-serif;
+  --color-ink: #060606;
+  --color-gold: #cfa95a;
+  --color-gold-light: #f1dba4;
+  --color-gold-dark: #8c6a2c;
+}
+
+html {
+  scroll-behavior: smooth;
+  background: var(--color-ink);
+}
+
+body {
+  margin: 0;
+  background: var(--color-ink);
+  color: #fff;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--color-gold);
+  color: #000;
+}
+
+.eyebrow {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--color-gold);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  border-radius: 9999px;
+  border: 1px solid color-mix(in srgb, var(--color-gold) 65%, transparent);
+  padding: 0.85rem 1.4rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--color-gold-light);
+  transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+}
+
+.btn:hover,
+.btn:focus-visible {
+  background: var(--color-gold);
+  border-color: var(--color-gold);
+  color: #060606;
+}
+
+.btn-solid {
+  background: var(--color-gold);
+  border-color: var(--color-gold);
+  color: #060606;
+}
+
+.btn-solid:hover,
+.btn-solid:focus-visible {
+  background: var(--color-gold-light);
+  border-color: var(--color-gold-light);
+}
+
+/* Canvas je visok koliko najveći ekran telefona (lvh), pa se ne menja kad se traka sa adresom pojavi ili
+   sakrije. Zbog toga nema ponovnog crtanja ni skakanja usred skrola. Prvi red je rezerva za stare pregledače. */
+.story-canvas {
+  height: 100%;
+  height: 100lvh;
+}
+
+.panel {
+  position: absolute;
+  inset: auto 0 0 0;
+  padding: 0 1.5rem 3.5rem;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(28px);
+  pointer-events: none;
+  transition:
+    opacity 0.6s ease,
+    transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1),
+    visibility 0s linear 0.6s;
+}
+
+.panel.is-on {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition-delay: 0s;
+}
+
+.panel.is-on .hit {
+  pointer-events: auto;
+}
+
+@media (min-width: 768px) {
+  .panel {
+    padding: 0 4rem 5rem;
+  }
+}
+
+@keyframes scroll-hint {
+  0% {
+    transform: scaleY(0);
+    transform-origin: top;
+  }
+  50% {
+    transform: scaleY(1);
+    transform-origin: top;
+  }
+  51% {
+    transform: scaleY(1);
+    transform-origin: bottom;
+  }
+  100% {
+    transform: scaleY(0);
+    transform-origin: bottom;
+  }
+}
+
+.scroll-hint-line {
+  animation: scroll-hint 2.2s ease-in-out infinite;
+}
+
+/* Koraci procesa, samo telefon: kartice ulaze naizmenično sa leve i desne strane, uz tanku zlatnu liniju.
+   Na računaru (768px i više) ništa od ovoga ne važi. */
+@media (max-width: 767px) {
+  #proces {
+    overflow-x: hidden;
+    overflow-x: clip; /* pomerene kartice ne prave horizontalni skrol */
+  }
+
+  .step-card::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 1px;
+    background: linear-gradient(90deg, var(--color-gold), transparent 70%);
+    transform-origin: left;
+  }
+
+  .step-card:nth-child(even)::before {
+    background: linear-gradient(270deg, var(--color-gold), transparent 70%);
+    transform-origin: right;
+  }
+
+  .step-list[data-reveal] .step-card {
+    opacity: 0;
+    transform: translate3d(-44px, 0, 0);
+    transition:
+      opacity 0.55s ease,
+      transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1);
+  }
+
+  .step-list[data-reveal] .step-card:nth-child(even) {
+    transform: translate3d(44px, 0, 0);
+  }
+
+  .step-list[data-reveal] .step-card::before {
+    transform: scaleX(0);
+    transition: transform 0.9s ease 0.25s;
+  }
+
+  .step-list[data-reveal] .step-card.is-in {
+    opacity: 1;
+    transform: none;
+  }
+
+  .step-list[data-reveal] .step-card.is-in::before {
+    transform: scaleX(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .step-list[data-reveal] .step-card,
+  .step-list[data-reveal] .step-card:nth-child(even) {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .step-list[data-reveal] .step-card::before {
+    transform: none;
+    transition: none;
+  }
+  .panel {
+    transition: none;
+  }
+  .scroll-hint-line {
+    animation: none;
+  }
+}

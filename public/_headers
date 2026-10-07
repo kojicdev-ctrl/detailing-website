@@ -1,0 +1,7 @@
+# Frejmovi telefona i fajlovi sa heš imenom se ne menjaju pod istim imenom, pa se keširaju godinu dana.
+# Kad se frejmovi telefona promene, treba novi folder (m3...), a ne izmena u m2.
+/frames/m2/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
